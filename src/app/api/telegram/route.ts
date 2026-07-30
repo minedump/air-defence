@@ -1,11 +1,23 @@
 // app/api/telegram/route.ts
 // Обработчик формы обратной связи — отправляет сообщение в Telegram-бот
 // Настройте TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID в .env.local
+//
+// TELEGRAM_PROXY_URL (опционально) — часть IP-адресов api.telegram.org
+// недоступна напрямую из некоторых сетей/хостингов. Если задана,
+// запрос к Telegram API идёт через HTTP(S)-прокси вида
+// http://user:pass@host:port
 
 import { NextRequest, NextResponse } from 'next/server';
+import { ProxyAgent, fetch as undiciFetch } from 'undici';
+
+// Требуется Node.js-рантайм — Edge не поддерживает undici/ProxyAgent
+export const runtime = 'nodejs';
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const PROXY_URL = process.env.TELEGRAM_PROXY_URL;
+
+const proxyAgent = PROXY_URL ? new ProxyAgent(PROXY_URL) : undefined;
 
 // Допустимая максимальная длина полей
 const LIMITS = {
@@ -115,11 +127,11 @@ export async function POST(request: NextRequest) {
     '*Сообщение:*',
     safeMessage,
     '',
-    `*Дата и время:* ${new Date().toLocaleString('ru-RU')}`,
+    `*Дата и время:* ${escapeMarkdown(new Date().toLocaleString('ru-RU'))}`,
   ].join('\n');
 
   try {
-    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    const response = await undiciFetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -127,9 +139,10 @@ export async function POST(request: NextRequest) {
         text,
         parse_mode: 'MarkdownV2',
       }),
+      ...(proxyAgent ? { dispatcher: proxyAgent } : {}),
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as { description?: string };
 
     if (!response.ok) {
       throw new Error(data.description || 'Ошибка Telegram API');
