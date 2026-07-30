@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/Footer';
 import { YandexMetrika } from '@/components/analytics/YandexMetrika';
 import { CookieConsent } from '@/components/ui/CookieConsent';
 import { siteConfig } from '@/lib/config';
+import { getSiteUrl } from '@/lib/utils';
 import '../styles/globals.scss';
 
 // Exo 2 — техно-гротеск с поддержкой кириллицы:
@@ -16,7 +17,7 @@ const exo2 = Exo_2({
   display: 'swap',
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.company.domain;
+const baseUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -42,7 +43,11 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [{ url: '/favicon.ico' }],
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
     apple: [{ url: '/apple-touch-icon.png' }],
   },
 };
@@ -53,8 +58,8 @@ const organizationJsonLd = {
   '@type': 'Organization',
   name: siteConfig.company.fullName,
   alternateName: siteConfig.company.shortName,
-  url: siteConfig.company.domain,
-  logo: `${siteConfig.company.domain}/icon-512.png`,
+  url: baseUrl,
+  logo: `${baseUrl}/icon-512.png`,
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: siteConfig.contacts.phone,
@@ -66,9 +71,6 @@ const organizationJsonLd = {
     streetAddress: siteConfig.company.legalAddress,
     addressCountry: 'RU',
   },
-  sameAs: [
-    siteConfig.contacts.telegramUrl,
-  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

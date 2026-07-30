@@ -1,54 +1,49 @@
-# Чеклист запуска нового сайта
-
-Скопируй и отмечай по мере выполнения.
+# Чеклист запуска — ДронЗащита
 
 ## 1. Конфигурация
 
-- [ ] Заполнить `src/lib/config.ts` — компания, контакты, банк, навигация
-- [ ] Создать `.env.local` с переменными:
-  - `NEXT_PUBLIC_SITE_URL=https://your-domain.ru`
-  - `TELEGRAM_BOT_TOKEN=...`
-  - `TELEGRAM_CHAT_ID=...`
-  - `NEXT_PUBLIC_YANDEX_METRIKA_ID=...` (опционально)
-- [ ] Обновить `siteConfig.meta.titleTemplate` и `defaultDescription`
+- [x] `src/lib/config.ts` заполнен — компания, банк, навигация, домен `dronzashita.ru`
+- [ ] Заполнить `.env.local` / Vercel Environment Variables:
+  - [x] `NEXT_PUBLIC_SITE_URL` — задан на Vercel (обновить на `https://dronzashita.ru` после подключения домена)
+  - [ ] `TELEGRAM_BOT_TOKEN` — **форма заявок не работает без него**
+  - [ ] `TELEGRAM_CHAT_ID` — **форма заявок не работает без него**
+  - [ ] `NEXT_PUBLIC_YANDEX_METRIKA_ID` — опционально, добавить когда будет счётчик
+- [x] `titleTemplate` и `defaultDescription` обновлены под SEO-семантику
+- [x] `contacts.email` — `info@dronzashita.ru`
+- [x] Публичная ссылка на Telegram убрана из UI (форма заявок по-прежнему шлёт лиды в Telegram-бота через `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`)
 
 ## 2. Дизайн и брендинг
 
-- [ ] Заменить шрифт в `src/app/layout.tsx` (рекомендуется Geist, Outfit, Cabinet Grotesk)
-- [ ] Обновить цвет `primary` в `tailwind.config.js`
-- [ ] Заменить логотип в `src/components/ui/Logo.tsx`
-- [ ] Добавить в `public/`:
-  - `favicon.ico` (32×32)
-  - `apple-touch-icon.png` (180×180)
-  - `og-image.jpg` (1200×630) — используется как дефолтное OG-изображение
+- [x] Шрифт — Exo 2 (кириллица)
+- [x] Цвет `primary` — стальной синий `#4C8DFF`
+- [x] Логотип — векторная иконка (сетчатый щит) в `Logo.tsx`
+- [x] `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `og-image.jpg` — сгенерированы (`scripts/generate-icons.mjs`)
 
 ## 3. SEO
 
-- [ ] Проверить `src/app/robots.ts` — убедиться что `disallow` настроен правильно
-- [ ] Проверить `src/app/sitemap.ts` — все нужные страницы есть в навигации конфига
-- [ ] Для каждой страницы заполнить `generatePageMetadata({ title, description, canonicalPath })`
-- [ ] Служебные страницы (privacy, agreement, requisites) имеют `noIndex: true` — оставить как есть
-- [ ] Добавить структурированные данные (JSON-LD) для главной страницы — Organization schema
-- [ ] Проверить OG-теги через https://opengraph.xyz
+- [x] `robots.ts` — disallow только `/api/`, домен читается из `getSiteUrl()`
+- [x] `sitemap.ts` — только реальные маршруты, якорные ссылки и noIndex-страницы исключены
+- [x] `generatePageMetadata` — canonical читает домен из окружения
+- [x] privacy/agreement/requisites — `noIndex: true`
+- [x] JSON-LD Organization schema в `layout.tsx`
+- [ ] Купить и подключить домен `dronzashita.ru` в Vercel
+- [ ] Проверить OG-теги на проде через https://opengraph.xyz
+- [ ] Добавить сайт в Яндекс.Вебмастер и Google Search Console
 
 ## 4. Контент
 
-- [ ] Главная страница (`src/app/page.tsx`) — заполнить секции
-- [ ] Страница услуг (`src/app/services/page.tsx`) — добавить контент
-- [ ] Страница контактов — проверить форму
-- [ ] Политика конфиденциальности — проверить актуальность текста
-- [ ] Согласие на обработку данных — проверить актуальность текста
+- [x] Главная — все секции заполнены
+- [x] Контакты, реквизиты, политика, согласие — готовы
+- [x] Страницы-заглушки `/about`, `/services` — удалены (не использовались)
 
 ## 5. Аналитика
 
-- [ ] Настроить Яндекс.Метрику (добавить ID в `.env.local`)
-- [ ] Проверить что счётчик работает в production
+- [ ] Яндекс.Метрика — добавить `NEXT_PUBLIC_YANDEX_METRIKA_ID` в Vercel, когда будет счётчик
 
 ## 6. Перед деплоем
 
-- [ ] `npm run build` — убедиться что сборка проходит без ошибок
-- [ ] Проверить мобильную версию
-- [ ] Проверить скорость через https://pagespeed.web.dev
-- [ ] Проверить sitemap: `https://your-domain.ru/sitemap.xml`
-- [ ] Проверить robots: `https://your-domain.ru/robots.txt`
-- [ ] Добавить сайт в Яндекс.Вебмастер и Google Search Console
+- [x] `npm run build` — проходит без ошибок
+- [ ] Проверить мобильную версию на реальном устройстве
+- [ ] Проверить скорость через https://pagespeed.web.dev (после подключения домена)
+- [ ] Проверить `/sitemap.xml` и `/robots.txt` на проде
+- [ ] Проверить отправку формы (после добавления Telegram-переменных)

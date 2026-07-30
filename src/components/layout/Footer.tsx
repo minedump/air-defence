@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconPhone, IconMail, IconBrandTelegram } from '@tabler/icons-react';
+import { IconPhone, IconMail } from '@tabler/icons-react';
 import Logo from '@/components/ui/Logo';
 import { siteConfig } from '@/lib/config';
 import { formatPhone } from '@/lib/utils';
@@ -64,17 +64,6 @@ export const Footer: React.FC = () => {
                   <IconMail size={18} strokeWidth={1.5} className="flex-shrink-0 text-primary" />
                   <a href={`mailto:${siteConfig.contacts.email}`} className="hover:text-heading transition-colors">
                     {siteConfig.contacts.email}
-                  </a>
-                </li>
-                <li className="flex items-center gap-2">
-                  <IconBrandTelegram size={18} strokeWidth={1.5} className="flex-shrink-0 text-primary" />
-                  <a
-                    href={siteConfig.contacts.telegramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-heading transition-colors"
-                  >
-                    {siteConfig.contacts.telegramHandle}
                   </a>
                 </li>
               </ul>

@@ -1,10 +1,10 @@
 import { MetadataRoute } from 'next';
-import { siteConfig } from '@/lib/config';
+import { getSiteUrl } from '@/lib/utils';
 
 export const dynamic = 'force-static';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = siteConfig.company.domain;
+  const baseUrl = getSiteUrl();
 
   return {
     rules: [

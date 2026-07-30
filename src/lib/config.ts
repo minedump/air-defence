@@ -5,7 +5,7 @@ import type { SiteConfig } from '@/lib/types';
 
 export const siteConfig: SiteConfig = {
   company: {
-    domain: 'https://example.com',
+    domain: 'https://dronzashita.ru',
     shortName: 'ДронЗащита',
     fullName: 'ООО «Служба специальных перевозок»',
     inn: '7714756451',
@@ -22,9 +22,7 @@ export const siteConfig: SiteConfig = {
   contacts: {
     // Только сырой номер — форматирование через formatPhone() из lib/utils.ts
     phone: '+79898045696',
-    email: 'info@example.com',
-    telegramUrl: 'https://t.me/your_bot',
-    telegramHandle: '@your_bot',
+    email: 'info@dronzashita.ru',
   },
 
   bank: {

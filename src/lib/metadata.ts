@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { siteConfig } from '@/lib/config';
+import { getSiteUrl } from '@/lib/utils';
 
 interface PageMetadataOptions {
   /** Заголовок страницы без названия компании. Итог: "Услуги | Название" */
@@ -26,7 +27,7 @@ export function generatePageMetadata({
   const fullTitle = meta.titleTemplate.replace('%s', title);
   const desc = description ?? meta.defaultDescription;
   const image = ogImage ?? meta.ogImage;
-  const canonical = canonicalPath ? `${company.domain}${canonicalPath}` : undefined;
+  const canonical = canonicalPath ? `${getSiteUrl()}${canonicalPath}` : undefined;
 
   return {
     // absolute — иначе layout-шаблон '%s | Название' применится второй раз

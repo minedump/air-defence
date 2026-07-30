@@ -23,8 +23,6 @@ export interface SiteConfig {
     /** Сырой номер телефона: '+70001234567'. Форматировать через formatPhone() */
     phone: string;
     email: string;
-    telegramUrl: string;
-    telegramHandle: string;
   };
   bank: {
     name: string;

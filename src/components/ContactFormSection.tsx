@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { IconBrandTelegram, IconPhone, IconMail, IconMapPin } from '@tabler/icons-react';
+import { IconPhone, IconMail, IconMapPin, IconChevronDown } from '@tabler/icons-react';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { siteConfig } from '@/lib/config';
 import { formatPhone } from '@/lib/utils';
 
@@ -29,6 +30,7 @@ export const ContactFormSection: React.FC = () => {
     message: '',
   });
 
+  const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -59,6 +61,11 @@ export const ContactFormSection: React.FC = () => {
     if (success) setSuccess('');
   };
 
+  const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConsent(e.target.checked);
+    if (error) setError('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanPhone = formData.phone.replace(/\D/g, '');
@@ -69,6 +76,10 @@ export const ContactFormSection: React.FC = () => {
     }
     if (cleanPhone.length !== 11) {
       setError('Введите корректный номер телефона (10 цифр после +7)');
+      return;
+    }
+    if (!consent) {
+      setError('Подтвердите согласие на обработку персональных данных');
       return;
     }
 
@@ -99,12 +110,13 @@ export const ContactFormSection: React.FC = () => {
       if (result.success) {
         setSuccess('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
         setFormData({ name: '', company: '', phone: '', email: '', objectType: '', message: '' });
+        setConsent(false);
         setTimeout(() => setSuccess(''), 5000);
       } else {
         throw new Error(result.error || 'Ошибка отправки');
       }
     } catch {
-      setError('Ошибка отправки. Попробуйте позже или напишите нам в Telegram.');
+      setError(`Ошибка отправки. Попробуйте позже или напишите на ${siteConfig.contacts.email}.`);
     } finally {
       setIsLoading(false);
     }
@@ -122,9 +134,6 @@ export const ContactFormSection: React.FC = () => {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-heading uppercase tracking-tight leading-tight mb-8">
                 Опишите объект — подготовим расчёт
               </h2>
-              <h3 className="text-xl lg:text-2xl font-bold text-heading">
-                или напишите нам в Telegram
-              </h3>
               <p className="text-muted">Отвечаем в течение рабочего часа.</p>
             </div>
 
@@ -143,33 +152,10 @@ export const ContactFormSection: React.FC = () => {
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <IconBrandTelegram size={20} strokeWidth={1.5} className="text-primary flex-shrink-0" />
-                <a
-                  href={siteConfig.contacts.telegramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-heading transition-colors"
-                >
-                  {siteConfig.contacts.telegramHandle}
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
                 <IconMapPin size={20} strokeWidth={1.5} className="text-primary flex-shrink-0" />
                 <span>{siteConfig.company.legalAddress}</span>
               </li>
             </ul>
-
-            <Button
-              variant="outline"
-              size="lg"
-              href={siteConfig.contacts.telegramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full"
-            >
-              <IconBrandTelegram size={24} strokeWidth={1.5} />
-              Telegram
-            </Button>
           </div>
 
           {/* Form */}
@@ -188,19 +174,26 @@ export const ContactFormSection: React.FC = () => {
               <label htmlFor="objectType" className="block text-xs font-bold uppercase tracking-wider mb-1 text-muted">
                 Тип объекта
               </label>
-              <select
-                id="objectType"
-                name="objectType"
-                value={formData.objectType}
-                onChange={handleChange}
-                disabled={isLoading}
-                className="w-full text-base px-4 py-3 rounded-[.75rem] border border-line bg-white/[0.03] text-heading focus:outline-none focus:border-primary h-[50px] appearance-none [&>option]:bg-ink"
-              >
-                <option value="">Не выбрано</option>
-                {objectTypes.map((type) => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  id="objectType"
+                  name="objectType"
+                  value={formData.objectType}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className="w-full text-base pl-4 pr-10 py-3 rounded-[.75rem] border border-line bg-white/[0.03] text-heading focus:outline-none focus:border-primary h-[50px] appearance-none [&>option]:bg-ink"
+                >
+                  <option value="">Не выбрано</option>
+                  {objectTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+                <IconChevronDown
+                  size={18}
+                  strokeWidth={1.5}
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted"
+                />
+              </div>
             </div>
 
             <Textarea
@@ -214,12 +207,26 @@ export const ContactFormSection: React.FC = () => {
               disabled={isLoading}
             />
 
-            <p className="text-muted/70 text-center text-sm">
-              Отправляя запрос, вы соглашаетесь с{' '}
-              <a href="/privacy" className="underline hover:no-underline">политикой конфиденциальности</a>{' '}
-              и даете{' '}
-              <a href="/agreement" className="underline hover:no-underline">согласие на обработку персональных данных</a>
-            </p>
+            <Checkbox
+              id="consent"
+              name="consent"
+              checked={consent}
+              onChange={handleConsentChange}
+              disabled={isLoading}
+              required
+              label={
+                <>
+                  Я согласен с{' '}
+                  <a href="/privacy" className="underline decoration-white/30 hover:text-heading hover:decoration-heading transition-colors">
+                    политикой конфиденциальности
+                  </a>{' '}
+                  и даю{' '}
+                  <a href="/agreement" className="underline decoration-white/30 hover:text-heading hover:decoration-heading transition-colors">
+                    согласие на обработку персональных данных
+                  </a>
+                </>
+              }
+            />
 
             {error && (
               <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
