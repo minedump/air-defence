@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Register New Page in Config",
+  "description": "When a new page.tsx is created inside the app/ directory, reminds the AI to add the route to lib/config.ts navigation arrays so it appears in the sitemap and navigation.",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "app/**/page.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new page was just created. Determine its route from the file path (e.g. app/blog/page.tsx → /blog). Then check lib/config.ts and decide:\n1. Should this route appear in header navigation? If yes, add it to siteConfig.navigation.header.\n2. Should this route appear in footer navigation? If yes, add it to siteConfig.navigation.footer.\n3. The sitemap (app/sitemap.ts) is auto-generated from navigation arrays — no changes needed there if config is updated.\n\nUse your judgment: legal/utility pages (privacy, agreement, requisites) belong in footer only. Main content pages (services, about, blog, portfolio) belong in header and footer. Internal/auth pages should not be added at all.\n\nAfter updating config.ts, confirm what was added and where."
+  }
+}

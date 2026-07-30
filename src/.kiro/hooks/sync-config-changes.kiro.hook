@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Sync Config Changes",
+  "description": "When lib/config.ts is edited, checks that navigation, sitemap and JSON-LD are consistent",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "lib/config.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "lib/config.ts was just edited. Please verify the following are consistent:\n\n1. Every route in siteConfig.navigation.header and siteConfig.navigation.footer has a corresponding page file in app/. If any route is missing a page, flag it.\n2. The sitemap (app/sitemap.ts) is auto-generated from navigation — no changes needed there unless the logic changed.\n3. The JSON-LD in app/layout.tsx references siteConfig fields — check if any renamed fields broke the references.\n4. If siteConfig.manifest fields were changed, confirm app/manifest.ts still looks correct.\n\nReport what you checked and whether everything is in sync. Only make changes if something is clearly broken."
+  }
+}
