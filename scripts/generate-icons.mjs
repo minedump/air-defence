@@ -49,28 +49,44 @@ writeFileSync(`${PUBLIC}/favicon.ico`, icoBuffer);
 rmSync(`${PUBLIC}/_favicon-src.png`);
 console.log('OK favicon.ico');
 
-// OG-изображение 1200x630 — бренд-плашка с иконкой, названием и тегом
+// OG-изображение 1200x630 — плоский тёмный фон + лого-леттеринг
+// (иконка + «ДРОНЗАЩИТА»), в тех же пропорциях, что и в шапке сайта:
+// там иконка 28px : шрифт 14px = 2:1, tracking 0.15em, вес 800 (extrabold).
+// Arial не имеет реальной насыщенности 800 — используем Arial Black,
+// это отдельный жирный шрифт, а не просто цифра веса.
 const ogW = 1200, ogH = 630;
-const ogIconSize = 200;
-const ogScale = (ogIconSize * 0.82) / 525;
-const ogIconW = 480 * ogScale;
-const ogIconH = 525 * ogScale;
-const ogIconX = (ogW - ogIconW) / 2;
-const ogIconY = 140;
+const headerIconH = 28, headerFontSize = 14, headerGap = 8;
+const targetLockupWidth = 880; // ширина всей связки (иконка+отступ+текст) на холсте
 
-const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${ogW}" height="${ogH}" viewBox="0 0 ${ogW} ${ogH}">
-  <defs>
-    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
-    </pattern>
-  </defs>
-  <rect width="${ogW}" height="${ogH}" fill="#0A0F1C"/>
-  <rect width="${ogW}" height="${ogH}" fill="url(#grid)"/>
-  <circle cx="${ogW / 2}" cy="230" r="260" fill="#4C8DFF" opacity="0.12"/>
-  <g transform="translate(${ogIconX} ${ogIconY}) scale(${ogScale})">${iconGroup('#4C8DFF')}</g>
-  <text x="${ogW / 2}" y="440" text-anchor="middle" font-family="Arial, sans-serif" font-size="56" font-weight="800" fill="#EAF0F6" letter-spacing="4">ДРОНЗАЩИТА</text>
-  <text x="${ogW / 2}" y="486" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#9DACC4" letter-spacing="2">АНТИДРОНОВАЯ ЗАЩИТА ОБЪЕКТОВ И ЧАСТНЫХ ДОМОВ</text>
-</svg>`;
+function buildLockupSvg(k, canvasW, iconX) {
+  const iconH = headerIconH * k;
+  const fontSize = headerFontSize * k;
+  const gap = headerGap * k;
+  const letterSpacing = fontSize * 0.15;
+  const scale = iconH / 525;
+  const iconW = 480 * scale;
+  const text = 'ДРОНЗАЩИТА';
+  const iconY = (ogH - iconH) / 2;
+  const textX = iconX + iconW + gap;
+  const textY = ogH / 2 + fontSize * 0.32;
 
-await sharp(Buffer.from(ogSvg)).jpeg({ quality: 90 }).toFile(`${PUBLIC}/og-image.jpg`);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${ogH}">
+    <rect width="${canvasW}" height="${ogH}" fill="#0A0F1C"/>
+    <g transform="translate(${iconX} ${iconY}) scale(${scale})">${iconGroup('#4C8DFF')}</g>
+    <text x="${textX}" y="${textY}" font-family="Arial Black, Arial, sans-serif" font-size="${fontSize}" font-weight="900" letter-spacing="${letterSpacing}" fill="#EAF0F6">${text}</text>
+  </svg>`;
+}
+
+// Пробный рендер на широком холсте — измеряем фактическую ширину связки,
+// чтобы точно отцентровать её на финальном холсте без обрезки текста
+const trialK = 200 / headerIconH;
+const trialSvg = buildLockupSvg(trialK, 3000, 50);
+const trialBuffer = await sharp(Buffer.from(trialSvg)).png().toBuffer();
+const { info: trialInfo } = await sharp(trialBuffer).trim({ background: '#0A0F1C', threshold: 10 }).toBuffer({ resolveWithObject: true });
+
+const finalK = trialK * (targetLockupWidth / trialInfo.width);
+const finalIconX = (ogW - targetLockupWidth) / 2;
+
+const ogSvg = buildLockupSvg(finalK, ogW, finalIconX);
+await sharp(Buffer.from(ogSvg)).jpeg({ quality: 92 }).toFile(`${PUBLIC}/og-image.jpg`);
 console.log('OK og-image.jpg 1200x630');

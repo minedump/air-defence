@@ -5,10 +5,18 @@ import { IconPhone, IconMail, IconMapPin, IconChevronDown } from '@tabler/icons-
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { siteConfig } from '@/lib/config';
-import { formatPhone } from '@/lib/utils';
+import { cn, formatPhone } from '@/lib/utils';
+
+interface ContactFormSectionProps {
+  /**
+   * Верхний отступ секции. По умолчанию — ритм между секциями на главной
+   * (pt-12/md:pt-24). На отдельной странице /contacts передаём pt-28 —
+   * такой же отступ, как на страницах реквизитов/политики/согласия.
+   */
+  topPaddingClassName?: string;
+}
 
 const objectTypes = [
   'Энергетика',
@@ -20,7 +28,9 @@ const objectTypes = [
   'Частный дом / парковка',
 ];
 
-export const ContactFormSection: React.FC = () => {
+export const ContactFormSection: React.FC<ContactFormSectionProps> = ({
+  topPaddingClassName = 'pt-12 md:pt-24',
+}) => {
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -123,17 +133,19 @@ export const ContactFormSection: React.FC = () => {
   };
 
   return (
-    <section id="contacts" className="pt-12 md:pt-24 pb-16 scroll-mt-16">
+    <section id="contacts" className={cn(topPaddingClassName, 'pb-16 scroll-mt-16')}>
       <div className="container">
+        <div className="max-w-3xl mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-heading uppercase tracking-tight leading-tight">
+            Контакты
+          </h2>
+        </div>
+
         <div className="card-dark grid grid-cols-1 lg:grid-cols-2 gap-16 md:p-8 p-4 rounded-[.75rem] md:rounded-[1.5rem]">
 
           {/* Left side */}
           <div className="flex flex-col justify-between space-y-8">
             <div className="space-y-4">
-              <Badge variant="primary">Связаться с нами</Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-heading uppercase tracking-tight leading-tight mb-8">
-                Опишите объект — подготовим расчёт
-              </h2>
               <p className="text-muted">Отвечаем в течение рабочего часа.</p>
             </div>
 

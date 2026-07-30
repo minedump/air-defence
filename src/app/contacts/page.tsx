@@ -8,9 +8,5 @@ export const metadata = generatePageMetadata({
 });
 
 export default function ContactsPage() {
-  return (
-    <div className="pt-20">
-      <ContactFormSection />
-    </div>
-  );
+  return <ContactFormSection topPaddingClassName="pt-28" />;
 }
