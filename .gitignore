@@ -22,7 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# local env files (содержат реальные секреты — токен бота, прокси и т.п.)
+.env
 .env*.local
 
 # vercel

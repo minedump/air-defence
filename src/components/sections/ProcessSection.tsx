@@ -13,6 +13,11 @@ const steps = [
   },
   {
     num: '03',
+    title: 'Поставка материалов',
+    description: 'Доставляем на объект все конструктивные элементы согласно проекту и согласованному графику.',
+  },
+  {
+    num: '04',
     title: 'Монтаж',
     description: 'Собираем защитный контур на объекте из готовых конструктивных элементов в согласованный по договору срок.',
   },
@@ -25,11 +30,11 @@ export function ProcessSection() {
         <div className="max-w-3xl mb-16">
           <Badge variant="primary" className="mb-4">Схема сотрудничества</Badge>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-heading uppercase tracking-tight leading-tight">
-            Три шага до защищённого объекта
+            Четыре шага до защищённого объекта
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step) => (
             <div
               key={step.num}
