@@ -21,7 +21,7 @@ export const siteConfig: SiteConfig = {
 
   contacts: {
     // Только сырой номер — форматирование через formatPhone() из lib/utils.ts
-    phone: '+79898045696',
+    phone: '+74954454405',
     email: 'info@dronzashita.ru',
   },
 
